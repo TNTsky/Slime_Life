@@ -3,16 +3,24 @@ import pygame
 import json
 import random
 import copy
+import tkinter as tk
+import threading
 
 with open('map.json') as f:
     map = json.load(f)
 
 
-# 遊戲速度
-speed = 10
-
 # 原始數量
 slime = 4
+
+# 預設生命
+normal_life = 300
+
+
+
+
+# 遊戲速度
+speed = 2
 
 # 食物生成間隔
 random_reward = (20, 40)
@@ -20,23 +28,21 @@ random_reward = (20, 40)
 # 視野距離
 sight = 10
 
-# 場上食物數量
+# 場上最大食物數量
 apple_max = 5
 
 # 每次吃食物增加生命
-apple_lifeadd = 100
+apple_lifeadd = 150
 
-# 生出後代所需食物量
+# 生產所需食物量
 need_eat = 2
 
-# 成年預設生命
-normal_life = 300
-
 # 新生預設生命
-new_life = 200
+new_life = 300
 
-# 飢餓狀態生命
+# 當生命低於時進入飢餓狀態
 less_life = 100
+
 
 
 pygame.init()
@@ -44,7 +50,6 @@ pygame.init()
 background_img = pygame.image.load('images/map.png')
 slime_img = pygame.image.load('images/SlimeBlue.png')
 apple_img = pygame.image.load('images/apple.png')
-
 
 size = [60, 40]
 apple_place = [(i, j) for j in range(16, 19) for i in range(26, 29)]+[(i, j) for j in range(21, 24) for i in range(26, 29)] + \
@@ -121,7 +126,7 @@ class Slime:
                             return()
 
         for i in apple_pos:
-            if (i[0]-self.x) in range(-sight, sight+1) and (i[1]-self.y) in range(-sight, sight+1):
+            if pow((i[0]-self.x),2)+pow((i[1]-self.y),2) <= pow(sight,2):
                 self.go(i)
                 self.back_path = []
                 return()
@@ -252,15 +257,109 @@ for i in slime_list:
     globals()['slime'+str(i)].rotate = i % 4
 
 
+
+
+
+
+
+
+
+def update():
+    root = tk.Tk()
+    root.title('參數調節')
+    root.geometry('250x600')
+    
+    def Speed(val):
+        global speed
+        speed=scale2.get()
+
+    def Reward(val):
+        global random_reward
+        random_reward=(int(scale3.get()/4*3),int(scale3.get()/4*5))
+        
+    def Sight(val):
+        global sight
+        sight=scale4.get()
+        
+    def Max(val):
+        global apple_max
+        apple_max=scale5.get()
+        
+    def Add(val):
+        global apple_lifeadd
+        apple_lifeadd=scale6.get()
+        
+    def Need(val):
+        global need_eat
+        need_eat=scale7.get()
+        
+    def New(val):
+        global new_life
+        new_life=scale8.get()
+        
+    def Less(val):
+        global less_life
+        less_life=scale9.get()
+    
+    def Born():
+        global slime_num
+        i = 1
+        while (i in slime_list):
+            i += 1
+        slime_list.append(i)
+        globals()['slime'+str(i)] = Slime()
+        globals()['slime'+str(i)].rotate = i % 4
+        globals()['slime'+str(i)].life = new_life
+        slime_num += 1
+    
+    def Default():
+        global speed,random_reward,sight,apple_max,apple_lifeadd,need_eat,new_life,less_life
+        scale2.set(speed)
+        scale3.set((random_reward[0]+random_reward[1])//2)
+        scale4.set(sight)
+        scale5.set(apple_max)
+        scale6.set(apple_lifeadd)
+        scale7.set(need_eat)
+        scale8.set(new_life)
+        scale9.set(less_life)
+
+
+    
+    scale2 = tk.Scale(root, from_=1, to=5,label="遊戲速度", orient='horizontal', command=Speed)
+    scale2.pack()
+    scale3 = tk.Scale(root, from_=10, to=200,label="食物生成間隔",resolution=10, orient='horizontal', command=Reward)
+    scale3.pack()
+    scale4 = tk.Scale(root, from_=2, to=30,label="視野距離", orient='horizontal', command=Sight)
+    scale4.pack()
+    scale5 = tk.Scale(root, from_=1, to=10,label="場上最大食物數量", orient='horizontal', command=Max)
+    scale5.pack()
+    scale6 = tk.Scale(root, from_=50, to=500,label="每次吃食物增加生命",resolution=50, orient='horizontal', command=Add)
+    scale6.pack()
+    scale7 = tk.Scale(root, from_=0, to=10,label="生產所需食物量", orient='horizontal', command=Need)
+    scale7.pack()
+    scale8 = tk.Scale(root, from_=100, to=1000,label="新生預設生命",resolution=100, orient='horizontal', command=New)
+    scale8.pack()
+    scale9 = tk.Scale(root, from_=50, to=500,label="當生命低於時進入飢餓狀態",resolution=50, orient='horizontal', command=Less)
+    scale9.pack()
+    button1 = tk.Button(root, text="還原預設值", command=Default)
+    button1.pack()
+    button = tk.Button(root, text="生成史萊姆", command=Born)
+    button.pack()
+    Default()
+
+    root.mainloop()
+
+thread = threading.Thread(target=update)
+thread.start()
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
-
     screen_image.blit(background_img, (0, 0))
 
-    if reward_time <= 0 and len(apple_pos) < apple_max and len(apple_home)+len(apple_pos) < 30:
+    if reward_time <= 0 and len(apple_pos) < apple_max and len(apple_home)+len(apple_pos) < 20:
         reward_time = reward()
 
     for i in apple_pos:
@@ -299,5 +398,5 @@ while True:
 
     hungry_num = 0
 
-    pygame.time.wait(1000//speed)
+    pygame.time.wait(10*pow(2,5-speed))
     pygame.display.flip()
