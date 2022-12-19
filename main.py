@@ -48,7 +48,8 @@ less_life = 100
 pygame.init()
 
 background_img = pygame.image.load('images/map.png')
-slime_img = pygame.image.load('images/SlimeBlue.png')
+SlimeBlue_img = pygame.image.load('images/SlimeBlue.png')
+SlimeGreen_img = pygame.image.load('images/SlimeGreen.png')
 apple_img = pygame.image.load('images/apple.png')
 
 size = [60, 40]
@@ -219,7 +220,10 @@ def find(start, end, arr, path):
 
 
 def paint(slime):
-    screen_image.blit(slime_img, (slime.x*16, slime.y*16))
+    if slime.life < less_life:
+        screen_image.blit(SlimeGreen_img, (slime.x*16, slime.y*16))
+    else:
+        screen_image.blit(SlimeBlue_img, (slime.x*16, slime.y*16))
 
 
 def reward():
@@ -255,13 +259,6 @@ for i in slime_list:
     globals()['slime'+str(i)] = Slime()
     globals()['slime'+str(i)].life = normal_life
     globals()['slime'+str(i)].rotate = i % 4
-
-
-
-
-
-
-
 
 
 def update():
@@ -314,14 +311,15 @@ def update():
     
     def Default():
         global speed,random_reward,sight,apple_max,apple_lifeadd,need_eat,new_life,less_life
-        scale2.set(speed)
-        scale3.set((random_reward[0]+random_reward[1])//2)
-        scale4.set(sight)
-        scale5.set(apple_max)
-        scale6.set(apple_lifeadd)
-        scale7.set(need_eat)
-        scale8.set(new_life)
-        scale9.set(less_life)
+        scale2.set(2)
+        scale3.set(30)
+        scale4.set(10)
+        scale5.set(5)
+        scale6.set(150)
+        scale7.set(2)
+        scale8.set(300)
+        scale9.set(100)
+        print("cj06m06")
 
 
     
