@@ -20,28 +20,28 @@ normal_life = 300
 
 
 # 遊戲速度
-speed = 2
+set_speed = 3
 
 # 食物生成間隔
-random_reward = (20, 40)
+set_random_reward = (20, 40)
 
 # 視野距離
-sight = 10
+set_sight = 10
 
 # 場上最大食物數量
-apple_max = 5
+set_apple_max = 5
 
 # 每次吃食物增加生命
-apple_lifeadd = 150
+set_apple_lifeadd = 150
 
 # 生產所需食物量
-need_eat = 2
+set_need_eat = 2
 
 # 新生預設生命
-new_life = 300
+set_new_life = 300
 
 # 當生命低於時進入飢餓狀態
-less_life = 100
+set_less_life = 100
 
 
 
@@ -58,6 +58,18 @@ size = [60, 40]
 apple_place = [(i, j) for j in range(16, 19) for i in range(26, 29)]+[(i, j) for j in range(21, 24) for i in range(26, 29)] + \
     [(i, j) for j in range(16, 19) for i in range(31, 34)]+[(i, j)
                                                             for j in range(21, 24) for i in range(31, 34)]
+
+
+
+speed = set_speed
+random_reward = set_random_reward
+sight = set_sight
+apple_max = set_apple_max
+apple_lifeadd = set_apple_lifeadd
+need_eat = set_need_eat
+new_life = set_new_life
+less_life = set_less_life
+
 apple_pos = []
 reward_time = random_reward[1]
 apple_home = []
@@ -266,7 +278,7 @@ for i in slime_list:
 def update():
     root = tk.Tk()
     root.title('參數調節')
-    root.geometry('250x600')
+    root.geometry('220x600')
     
     def Speed(val):
         global speed
@@ -313,15 +325,14 @@ def update():
     
     def Default():
         global speed,random_reward,sight,apple_max,apple_lifeadd,need_eat,new_life,less_life
-        scale2.set(2)
-        scale3.set(30)
-        scale4.set(10)
-        scale5.set(5)
-        scale6.set(150)
-        scale7.set(2)
-        scale8.set(300)
-        scale9.set(100)
-        print("cj06m06")
+        scale2.set(set_speed)
+        scale3.set(sum(set_random_reward)//2)
+        scale4.set(set_sight)
+        scale5.set(set_apple_max)
+        scale6.set(set_apple_lifeadd)
+        scale7.set(set_need_eat)
+        scale8.set(set_new_life)
+        scale9.set(set_less_life)
 
 
     
