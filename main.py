@@ -48,8 +48,10 @@ less_life = 100
 pygame.init()
 
 background_img = pygame.image.load('images/map.png')
-SlimeBlue_img = pygame.image.load('images/SlimeBlue.png')
-SlimeGreen_img = pygame.image.load('images/SlimeGreen.png')
+# SlimeBlue_img = pygame.image.load('images/SlimeBlue.png')
+SlimeBlue_img = pygame.image.load('images/(New)SlimeBlue.png')
+# SlimeGreen_img = pygame.image.load('images/SlimeGreen.png')
+SlimeGreen_img = pygame.image.load('images/(New)SlimeGreen.png')
 apple_img = pygame.image.load('images/apple.png')
 
 size = [60, 40]
@@ -355,6 +357,8 @@ while True:
         if event.type == pygame.QUIT:
             pygame.quit()
             sys.exit()
+
+    screen_image.fill((62,62,62))
     screen_image.blit(background_img, (0, 0))
 
     if reward_time <= 0 and len(apple_pos) < apple_max and len(apple_home)+len(apple_pos) < 20:
@@ -382,7 +386,7 @@ while True:
     life_pass()
 
     alive_image = pygame.font.Font(
-        "font/msjh.ttc", 24).render(f'目前數量:{len(slime_list)}', True, (173, 111, 80))
+        "font/msjh.ttc", 24).render(f'目前數量:{len(slime_list)}', True, (173, 111, 80) )
     screen_image.blit(alive_image, (975, 50))
     alive_image = pygame.font.Font(
         "font/msjh.ttc", 24).render(f'飢餓數量:{hungry_num}', True, (173, 111, 80))
