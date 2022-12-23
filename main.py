@@ -1,4 +1,5 @@
 import sys
+import os
 import pygame
 import json
 import random
@@ -6,8 +7,6 @@ import copy
 import tkinter as tk
 import threading
 
-with open('map.json') as f:
-    map = json.load(f)
 
 
 # 原始數量
@@ -18,47 +17,61 @@ normal_life = 300
 
 
 
-
-# 遊戲速度
+# 遊戲速度(1~5)
 set_speed = 3
 
-# 食物生成間隔
+# 食物生成間隔(10~200)
 set_random_reward = (20, 40)
 
-# 視野距離
+# 視野距離(2~30)
 set_sight = 10
 
-# 場上最大食物數量
+# 場上最大食物數量(1~10)
 set_apple_max = 5
 
-# 每次吃食物增加生命
+# 每次吃食物增加生命(50~500)
 set_apple_lifeadd = 150
 
-# 生產所需食物量
+# 生產所需食物量(0~10)
 set_need_eat = 2
 
-# 新生預設生命
+# 新生預設生命(100~1000)
 set_new_life = 300
 
-# 當生命低於時進入飢餓狀態
+# 當生命低於時進入飢餓狀態(50~500)
 set_less_life = 100
 
 
 
+# 為了打包成exe
+def resource_path(relative_path):
+    """获取程序中所需文件资源的绝对路径"""
+    try:
+        # PyInstaller创建临时文件夹,将路径存储于_MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
+
+
+with open(resource_path('map.json')) as f:
+    map = json.load(f)
+
+
 pygame.init()
 
-background_img = pygame.image.load('images/map.png')
-# SlimeBlue_img = pygame.image.load('images/SlimeBlue.png')
-SlimeBlue_img = pygame.image.load('images/(New)SlimeBlue.png')
-# SlimeGreen_img = pygame.image.load('images/SlimeGreen.png')
-SlimeGreen_img = pygame.image.load('images/(New)SlimeGreen.png')
-apple_img = pygame.image.load('images/apple.png')
+background_img = pygame.image.load(resource_path('images/map.png'))
+# SlimeBlue_img = pygame.image.load(resource_path('images/SlimeBlue.png'))
+SlimeBlue_img = pygame.image.load(resource_path('images/(New)SlimeBlue.png'))
+# SlimeGreen_img = pygame.image.load(resource_path('images/SlimeGreen.png'))
+SlimeGreen_img = pygame.image.load(resource_path('images/(New)SlimeGreen.png'))
+apple_img = pygame.image.load(resource_path('images/apple.png'))
 
 size = [60, 40]
 apple_place = [(i, j) for j in range(16, 19) for i in range(26, 29)]+[(i, j) for j in range(21, 24) for i in range(26, 29)] + \
     [(i, j) for j in range(16, 19) for i in range(31, 34)]+[(i, j)
                                                             for j in range(21, 24) for i in range(31, 34)]
-
 
 
 speed = set_speed
@@ -95,7 +108,6 @@ class Slime:
 
     def move(self):
         global slime_num
-        global hungry_num
         if self.must_path:
             self.x, self.y = self.must_path.pop()
             if self.eat >= need_eat:
@@ -144,11 +156,11 @@ class Slime:
             if pow((i[0]-self.x),2)+pow((i[1]-self.y),2) <= pow(sight,2):
                 self.go(i)
                 self.back_path = []
+                self.rotate = (self.rotate+1) % 4
                 return()
         self.move_path = []
 
         if self.life < less_life:
-            hungry_num += 1
             if self.x not in range(26, 34) or self.y not in range(16, 24):
                 pos = (32, 22)
                 if self.back_path:
@@ -235,7 +247,9 @@ def find(start, end, arr, path):
 
 def paint(slime):
     if slime.life < less_life:
+        global hungry_num
         screen_image.blit(SlimeGreen_img, (slime.x*16, slime.y*16))
+        hungry_num+=1
     else:
         screen_image.blit(SlimeBlue_img, (slime.x*16, slime.y*16))
 
@@ -265,7 +279,7 @@ def life_pass():
 
 
 pygame.display.set_caption('窩也不知道這是甚麼')
-screen_image = pygame.display.set_mode((1120, 640))
+screen_image = pygame.display.set_mode((1140, 640))
 screen_image.blit(background_img, (0, 0))
 
 slime_list = [i+1 for i in range(slime)]
@@ -397,16 +411,16 @@ while True:
     life_pass()
 
     alive_image = pygame.font.Font(
-        "font/msjh.ttc", 24).render(f'目前數量:{len(slime_list)}', True, (173, 111, 80) )
+        resource_path("font/msjh.ttf"), 24).render(f'目前數量:{len(slime_list)}', True, (173, 111, 80) )
     screen_image.blit(alive_image, (975, 50))
     alive_image = pygame.font.Font(
-        "font/msjh.ttc", 24).render(f'飢餓數量:{hungry_num}', True, (173, 111, 80))
+        resource_path("font/msjh.ttf"), 24).render(f'飢餓數量:{hungry_num}', True, (173, 111, 80))
     screen_image.blit(alive_image, (975, 150))
     alive_image = pygame.font.Font(
-        "font/msjh.ttc", 24).render(f'累計總數:{slime_num}', True, (173, 111, 80))
+        resource_path("font/msjh.ttf"), 24).render(f'累計總數:{slime_num}', True, (173, 111, 80))
     screen_image.blit(alive_image, (975, 350))
     alive_image = pygame.font.Font(
-        "font/msjh.ttc", 24).render(f'死亡累積:{death}', True, (173, 111, 80))
+        resource_path("font/msjh.ttf"), 24).render(f'死亡累計:{death}', True, (173, 111, 80))
     screen_image.blit(alive_image, (975, 450))
 
     hungry_num = 0
