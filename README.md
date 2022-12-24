@@ -9,7 +9,8 @@
     以此進而模擬生物的群體生活模式。
     
 ## 執行
-    可直接下載打包好的exe執行檔或是zip解壓後開啟內部的exe檔
+可直接下載打包好的exe執行檔或是zip解壓後開啟內部的exe檔
++ https://github.com/TNTsky/Slime_Life/releases/tag/v0.1.0
 
 ## 預設參數
     在程式碼最開頭部分有多項預設參數可供修改
