@@ -1,4 +1,5 @@
 # OuO
+<img width="1365" height="645" alt="image" src="https://github.com/user-attachments/assets/2f54c61f-eaa4-4945-bd44-56f633e7b480" />
 
 ## 介紹
     透過 pygame 實作的簡易遊戲。
